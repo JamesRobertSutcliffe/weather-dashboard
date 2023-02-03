@@ -37,7 +37,13 @@ load map of requested location?
 Fix up HTML after
 
 
+next steps - 
 
-
+1 - fix up five day data on page/ add text to explain what values afre
+2 - add titles (i.e. forecast) and dates using moment
+3 - add icons with if statements
+4 - create code for buttons section / create buttons then copy logic for passing these results 
+5 - Clean up CSS
+6 - page default to London? 
 
 
