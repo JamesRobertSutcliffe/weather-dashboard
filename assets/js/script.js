@@ -4,13 +4,31 @@ $(document).ready(function() {
 
 const apiKey = '7309af6a5d69e23b822c2c7da6286fda';
 
-$('.search-button').on('click', function search(event){
+$('.search-button').on('click', function(event){
     event.preventDefault();
+    clear();
     let searchInput = $('#search-input').val().trim()
     let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&appid=" + apiKey;
-   
+    populate(queryURL);
+
+});
+
+// test showing how button functions would work / populate history with buttons from local storage / set data-id to search input from local storage / 
+// use this method get search input term and create query url then run populate function 
+
+$('#test').on('click', function(event){
+    event.preventDefault();
+    clear();
+    // let searchInput = $('#this').DATA-ID.val().trim()
+    let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + "krakow" + "&appid=" + apiKey;
+    populate(queryURL);
+
+});
+
 //  Gets information from API 
     
+function populate(queryURL){
+
     $.ajax({
         url: queryURL,
         method: "GET"
@@ -40,35 +58,32 @@ $.ajax({
   })
     .then(function(response2) {
 
-let data = [response2.list[4], response2.list[12], response2.list[20], response2.list[28], response2.list[36]];
+// Array for daily responses created
 
+let data = [response2.list[0], response2.list[8], response2.list[16], response2.list[24], response2.list[32]];
+
+// loop through five day data array and populate these to html
 
 for (i = 0; i < 5; i++){
     let container = $('<div>')
-    let fiveDayTemp = $('<p>').text((data[i].main.temp - 273.15).toFixed(2));
-    let fiveDayWind = $('<p>').text(data[i].wind.speed);
-    let fiveDayHumidity = $('<p>').text(data[i].main.humidity);
+    let fiveDayTemp = $('<p>').text(`Temp: ${(data[i].main.temp - 273.15).toFixed(2)}°C`);
+    let fiveDayWind = $('<p>').text(`wind: ${data[i].wind.speed}`);
+    let fiveDayHumidity = $('<p>').text(`Humidity: ${data[i].main.humidity}`);
     container.append(fiveDayTemp, fiveDayHumidity, fiveDayWind);
-
-
-
 $('#forecast').append(container);
-
-
-
-    // console.log(fiveDayHumidity)
-    // console.log(fiveDayTemp)
-    // console.log(fiveDayWind)
-
-}
+};
 
 console.log(response2)
 
 })
-
 })
+};
 
+// clears HTML for each new search
 
-});
+function clear(){
+    $('#forecast').empty();
+    $('#today').empty();
+}
 
 });
