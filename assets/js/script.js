@@ -35,14 +35,20 @@ $(document).ready(function () {
         })
             .then(function (response) {
 
+                let dateToday = moment().format('DD/MM/YYYY');
+                let iconURL = `http://openweathermap.org/img/wn/${response.weather[0].icon}@2x.png`
+
                 // Renders got data from the API to page dynamically
 
-                let city = $('<h1>').text(response.name);
-                let humidity = $('<h6>').text(`Humidity: ${response.main.humidity}%`)
-                let windSpeed = $('<h6>').text(`Wind Speed: ${response.wind.speed} meter/sec`)
+                console.log(response)
+
+                let weatherTodayIcon = $('<img>').attr('src', iconURL);
+                let city = $('<h1>').text(`${response.name} (${dateToday})`);
+                let humidity = $('<h6>').text(`Humidity: ${response.main.humidity} % `)
+                let windSpeed = $('<h6>').text(`Wind Speed: ${response.wind.speed} meter / sec`)
                 let todayCelcius = response.main.temp - 273.15;
                 let tempToday = $('<h6>').text(`Temperature: ${todayCelcius.toFixed(2)}°C`);
-                $('#today').append(city, tempToday, humidity, windSpeed);
+                $('#today').append(city, weatherTodayIcon, tempToday, humidity, windSpeed);
                 console.log(response);
 
                 // Renders lon & lat values for 5 day api
@@ -65,15 +71,24 @@ $(document).ready(function () {
                         // loop through five day data array and populate these to html
 
                         for (i = 0; i < 5; i++) {
-                            let container = $('<div>')
+                            let iconURL2 = `http://openweathermap.org/img/wn/${data[i].weather[0].icon}@2x.png`
+                            console.log(iconURL2);
+                            let container = $('<div>').attr('id', [i])
+                            let weatherFiveDayIcon = $('<img>').attr('src', iconURL2);
                             let fiveDayTemp = $('<p>').text(`Temp: ${(data[i].main.temp - 273.15).toFixed(2)}°C`);
                             let fiveDayWind = $('<p>').text(`wind: ${data[i].wind.speed}`);
                             let fiveDayHumidity = $('<p>').text(`Humidity: ${data[i].main.humidity}`);
-                            container.append(fiveDayTemp, fiveDayHumidity, fiveDayWind);
+                            container.append(weatherFiveDayIcon, fiveDayTemp, fiveDayHumidity, fiveDayWind);
                             $('#forecast').append(container);
                         };
 
-                        console.log(response2)
+                        $('#five-day-heading').removeClass("hide");
+
+                        $('#0').prepend(`<h5>${moment().add(1, 'days').format('DD/MM/YYYY')}</h5>`);
+                        $('#1').prepend(`<h5>${moment().add(2, 'days').format('DD/MM/YYYY')}</h5>`);
+                        $('#2').prepend(`<h5>${moment().add(3, 'days').format('DD/MM/YYYY')}</h5>`);
+                        $('#3').prepend(`<h5>${moment().add(4, 'days').format('DD/MM/YYYY')}</h5>`);
+                        $('#4').prepend(`<h5>${moment().add(5, 'days').format('DD/MM/YYYY')}</h5>`);
 
                     })
             })
