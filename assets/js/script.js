@@ -1,17 +1,25 @@
 $(document).ready(function () {
 
-    // Search function
+    // global variables
 
     const apiKey = '7309af6a5d69e23b822c2c7da6286fda';
+
+    let searchHistory = [];
+
+    // Search function
 
     $('.search-button').on('click', function (event) {
         event.preventDefault();
         clear();
         let searchInput = $('#search-input').val().trim()
+        searchHistory.push(searchInput);
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&appid=" + apiKey;
         populate(queryURL);
+        console.log(searchHistory);
 
     });
+
+
 
     // test showing how button functions would work / populate history with buttons from local storage / set data-id to search input from local storage / 
     // use this method get search input term and create query url then run populate function 
@@ -40,7 +48,6 @@ $(document).ready(function () {
 
                 // Renders got data from the API to page dynamically
 
-                console.log(response)
 
                 let weatherTodayIcon = $('<img>').attr('src', iconURL);
                 let city = $('<h1>').text(`${response.name} (${dateToday})`);
@@ -49,7 +56,7 @@ $(document).ready(function () {
                 let todayCelcius = response.main.temp - 273.15;
                 let tempToday = $('<h6>').text(`Temperature: ${todayCelcius.toFixed(2)}°C`);
                 $('#today').append(city, weatherTodayIcon, tempToday, humidity, windSpeed);
-                console.log(response);
+
 
                 // Renders lon & lat values for 5 day api
 
