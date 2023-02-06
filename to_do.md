@@ -1,8 +1,10 @@
 next steps - 
 
+3 - sort out error message if input is incorrect - if city name is not recognised flag this to user and do not run functions
 
-4 - create code for buttons section / local storage to create buttons from previous searches / run these through populate function on click 
-5 - Clean up CSS
-6 - page default to London? 
+5 - readme including functions
+
+4 - Clean up CSS - test more
+
 
 

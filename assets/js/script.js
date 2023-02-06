@@ -3,53 +3,83 @@ $(document).ready(function () {
     // global variables
 
     const apiKey = '7309af6a5d69e23b822c2c7da6286fda';
-
     let searchHistory = [];
 
-    // Search function
+    // Renders London as homepage setting
+
+    function renderLondon() {
+        clear();
+        let searchInput = 'London';
+        let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&appid=" + apiKey;
+        populate(queryURL);
+    };
+
+    renderLondon();
+
+    //    search function
 
     $('.search-button').on('click', function (event) {
+        if ($('#search-input').val() == '') {
+            return;
+        }
         event.preventDefault();
         clear();
         let searchInput = $('#search-input').val().trim()
         searchHistory.unshift(searchInput);
         localStorage.setItem('history', JSON.stringify(searchHistory));
         $('.list-group').empty();
-        savedHistory();
+        $('.clear-history').removeClass('hide');
+        savedHistoryFun();
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&appid=" + apiKey;
         populate(queryURL);
         console.log(searchHistory);
-
     });
 
+    // renders search history buttons from local storage to page 
 
-
-    function savedHistory() {
+    function savedHistoryFun() {
         let savedHistory = JSON.parse(localStorage.getItem('history'));
-        for (i = 0; i < savedHistory.length; i++) {
-            let historyButton = $('<button>').text(savedHistory[i]);
-            searchHistory = savedHistory;
-            $(historyButton).attr("data-id", savedHistory[i]);
-            $(historyButton).addClass('history-button');
-            $('.list-group').append(historyButton);
+        if (savedHistory == null) {
+            return
+        } else {
+            $('.clear-history').removeClass('hide');
+            for (i = 0; i < savedHistory.length; i++) {
+                let historyButton = $('<button>').text(savedHistory[i]);
+                searchHistory = savedHistory;
+                $(historyButton).attr("data-id", savedHistory[i]);
+                $(historyButton).addClass('history-button');
+                $('.list-group').append(historyButton);
+            }
         }
-    }
+    };
 
-    savedHistory();
+    savedHistoryFun();
 
-    // test showing how button functions would work / populate history with buttons from local storage / set data-id to search input from local storage / 
-    // use this method get search input term and create query url then run populate function 
+    // renders data from search history buttons
 
-    $('.history-button').on('click', function (event) {
+    function renderHistoryButtons(event) {
         event.preventDefault();
         clear();
-        let searchInput = $('#this').DATA - ID.val().trim()
+        let searchInput = $(this).attr("data-id");
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&appid=" + apiKey;
         populate(queryURL);
 
-    });
+    };
 
-    //  Gets information from API 
+    $(document).on("click", ".history-button", renderHistoryButtons);
+
+    // clear history function
+
+    $('.clear-history').on('click', function () {
+        $('.list-group').empty();
+        $('.clear-history').addClass('hide');
+        localStorage.clear();
+        searchHistory = [];
+        savedHistoryFun();
+
+    })
+
+    //  Gets information from API and populates data to page
 
     function populate(queryURL) {
 
@@ -59,16 +89,16 @@ $(document).ready(function () {
         })
             .then(function (response) {
 
-                let dateToday = moment().format('DD/MM/YYYY');
+                let dateToday = moment().format('DD/MM/YY');
                 let iconURL = `http://openweathermap.org/img/wn/${response.weather[0].icon}@2x.png`
 
                 // Renders got data from the API to page dynamically
 
-
                 let weatherTodayIcon = $('<img>').attr('src', iconURL);
-                let city = $('<h1>').text(`${response.name} (${dateToday})`);
+                let city = $('<h1>').text(`${response.name}(${dateToday})`);
+                city.addClass('bg-fill');
                 let humidity = $('<h6>').text(`Humidity: ${response.main.humidity} % `)
-                let windSpeed = $('<h6>').text(`Wind Speed: ${response.wind.speed} meter / sec`)
+                let windSpeed = $('<h6>').text(`Wind Speed: ${response.wind.speed} m/s`)
                 let todayCelcius = response.main.temp - 273.15;
                 let tempToday = $('<h6>').text(`Temperature: ${todayCelcius.toFixed(2)}°C`);
                 $('#today').append(city, weatherTodayIcon, tempToday, humidity, windSpeed);
@@ -95,11 +125,11 @@ $(document).ready(function () {
 
                         for (i = 0; i < 5; i++) {
                             let iconURL2 = `http://openweathermap.org/img/wn/${data[i].weather[0].icon}@2x.png`
-                            console.log(iconURL2);
                             let container = $('<div>').attr('id', [i])
+                            container.addClass('border-wide')
                             let weatherFiveDayIcon = $('<img>').attr('src', iconURL2);
                             let fiveDayTemp = $('<p>').text(`Temp: ${(data[i].main.temp - 273.15).toFixed(2)}°C`);
-                            let fiveDayWind = $('<p>').text(`wind: ${data[i].wind.speed}`);
+                            let fiveDayWind = $('<p>').text(`wind: ${data[i].wind.speed} m/s`);
                             let fiveDayHumidity = $('<p>').text(`Humidity: ${data[i].main.humidity}%`);
                             container.append(weatherFiveDayIcon, fiveDayTemp, fiveDayHumidity, fiveDayWind);
                             $('#forecast').append(container);
@@ -123,5 +153,7 @@ $(document).ready(function () {
         $('#forecast').empty();
         $('#today').empty();
     };
+
+
 
 });
