@@ -12,7 +12,10 @@ $(document).ready(function () {
         event.preventDefault();
         clear();
         let searchInput = $('#search-input').val().trim()
-        searchHistory.push(searchInput);
+        searchHistory.unshift(searchInput);
+        localStorage.setItem('history', JSON.stringify(searchHistory));
+        $('.list-group').empty();
+        savedHistory();
         let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&appid=" + apiKey;
         populate(queryURL);
         console.log(searchHistory);
@@ -21,14 +24,27 @@ $(document).ready(function () {
 
 
 
+    function savedHistory() {
+        let savedHistory = JSON.parse(localStorage.getItem('history'));
+        for (i = 0; i < savedHistory.length; i++) {
+            let historyButton = $('<button>').text(savedHistory[i]);
+            searchHistory = savedHistory;
+            $(historyButton).attr("data-id", savedHistory[i]);
+            $(historyButton).addClass('history-button');
+            $('.list-group').append(historyButton);
+        }
+    }
+
+    savedHistory();
+
     // test showing how button functions would work / populate history with buttons from local storage / set data-id to search input from local storage / 
     // use this method get search input term and create query url then run populate function 
 
-    $('#test').on('click', function (event) {
+    $('.history-button').on('click', function (event) {
         event.preventDefault();
         clear();
-        // let searchInput = $('#this').DATA-ID.val().trim()
-        let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + "krakow" + "&appid=" + apiKey;
+        let searchInput = $('#this').DATA - ID.val().trim()
+        let queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchInput + "&appid=" + apiKey;
         populate(queryURL);
 
     });
@@ -84,7 +100,7 @@ $(document).ready(function () {
                             let weatherFiveDayIcon = $('<img>').attr('src', iconURL2);
                             let fiveDayTemp = $('<p>').text(`Temp: ${(data[i].main.temp - 273.15).toFixed(2)}°C`);
                             let fiveDayWind = $('<p>').text(`wind: ${data[i].wind.speed}`);
-                            let fiveDayHumidity = $('<p>').text(`Humidity: ${data[i].main.humidity}`);
+                            let fiveDayHumidity = $('<p>').text(`Humidity: ${data[i].main.humidity}%`);
                             container.append(weatherFiveDayIcon, fiveDayTemp, fiveDayHumidity, fiveDayWind);
                             $('#forecast').append(container);
                         };
